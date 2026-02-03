@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICCT Campus Events | Event Management System</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/animations.css">
+    <link rel="stylesheet" href="styles/responsive.css">
+    <link rel="icon" href="assets/images/icct-logo.png">
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="assets/images/icct-logo.png" alt="ICCT College Logo">
+                <h1>ICCT Campus Events</h1>
+            </div>
+            <div class="nav-links">
+                <a href="#events"><i class="fas fa-calendar-alt"></i> Events</a>
+                <a href="#qr-generator"><i class="fas fa-qrcode"></i> My QR</a>
+                <a href="#dashboard" id="dashboard-link" style="display: none;"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="#campuses"><i class="fas fa-school"></i> Campuses</a>
+                <a href="#user-login" id="user-login-link"><i class="fas fa-sign-in-alt"></i> LogIn</a>
+                <a href="#" id="admin-login-link" class="admin-link" data-open="user-auth-modal" data-tab="admin"><i class="fas fa-user-shield"></i> Admin</a>
+                <a href="#user-logout" id="user-logout-link" class="logout-btn" style="display: none;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- User Login/Register Modal -->
+    <div id="user-auth-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+        <div class="modal-content" style="max-width: 450px;" tabindex="-1">
+            <span class="close-modal">&times;</span>
+                <div class="auth-tabs">
+                <button class="tab-btn active" data-tab="login">Login</button>
+                <button class="tab-btn" data-tab="register">Register</button>
+                <button class="tab-btn" data-tab="admin">Admin</button>
+            </div>
+            
+            <div class="tab-content active" id="login-tab">
+                <div class="login-form">
+                    <h2 id="auth-modal-title"><i class="fas fa-sign-in-alt"></i> LogIn</h2>
+                    <div class="input-field">
+                        <label for="student-email">Email or Student ID</label>
+                        <input type="text" id="student-email" placeholder="Enter email or student ID">
+                    </div>
+                    <div class="input-field">
+                        <label for="student-password">Password</label>
+                        <input type="password" id="student-password" placeholder="Enter password">
+                    </div>
+                    <button id="student-login-btn" class="btn-primary" style="width: 100%; margin-top: 1.5rem;">
+                        <i class="fas fa-sign-in-alt"></i> LogIn
+                    </button>
+                    <p class="note" style="text-align: center; margin-top: 1rem;">
+                        <a href="#forgot-password" class="forgot-link">Forgot Password?</a>
+                    </p>
+                </div>
+            </div>
+            
+                <div class="tab-content" id="register-tab">
+                <div class="register-form">
+                    <h2><i class="fas fa-user-plus"></i> Student Registration</h2>
+                    <div class="input-field">
+                        <label for="reg-name">Full Name</label>
+                        <input type="text" id="reg-name" placeholder="Enter your full name">
+                    </div>
+                    <div class="input-field">
+                        <label for="reg-email">Email Address</label>
+                        <input type="email" id="reg-email" placeholder="Enter your email">
+                    </div>
+                    <div class="input-field">
+                        <label for="reg-student-id">Student ID</label>
+                        <input type="text" id="reg-student-id" placeholder="Enter your student ID">
+                    </div>
+                    <div class="input-field">
+                        <label for="reg-campus">Campus</label>
+                        <select id="reg-campus">
+                            <option value="">Select Campus</option>
+                            <option value="Main Campus">Main Campus</option>
+                            <option value="Cainta Campus">Cainta Campus</option>
+                            <option value="Antipolo Campus">Antipolo Campus</option>
+                            <option value="San Mateo Campus">San Mateo Campus</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label for="reg-password">Password</label>
+                        <input type="password" id="reg-password" placeholder="Create password (min. 8 chars)">
+                    </div>
+                    <div class="input-field">
+                        <label for="reg-confirm-password">Confirm Password</label>
+                        <input type="password" id="reg-confirm-password" placeholder="Confirm password">
+                    </div>
+                    <button id="student-register-btn" class="btn-primary" style="width: 100%; margin-top: 1.5rem;">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                </div>
+            </div>
+            <div class="tab-content" id="admin-tab">
+                <div class="login-form">
+                    <h2><i class="fas fa-user-shield"></i> Admin Login</h2>
+                    <div class="input-field">
+                        <label for="admin-username">Username</label>
+                        <input type="text" id="admin-username" placeholder="Enter admin username" required>
+                        <span class="input-error" id="admin-username-error" aria-live="polite"></span>
+                    </div>
+                    <div class="input-field">
+                        <label for="admin-password">Password</label>
+                        <input type="password" id="admin-password" placeholder="Enter password" required>
+                        <span class="input-error" id="admin-password-error" aria-live="polite"></span>
+                    </div>
+                    <button id="admin-login-btn" class="btn-primary" style="width: 100%; margin-top: 1.5rem;">
+                        <i class="fas fa-sign-in-alt"></i> Login as Admin
+                    </button>
+                    <p class="note" style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
+                        Default: admin / admin123
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgot-password-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <span class="close-modal">&times;</span>
+            <div class="forgot-form">
+                <h2><i class="fas fa-key"></i> Reset Password</h2>
+                <div class="input-field">
+                    <label for="reset-email">Email Address</label>
+                    <input type="email" id="reset-email" placeholder="Enter your registered email">
+                </div>
+                <button id="reset-password-btn" class="btn-primary" style="width: 100%; margin-top: 1.5rem;">
+                    <i class="fas fa-paper-plane"></i> Send Reset Link
+                </button>
+                <p class="note" style="text-align: center; margin-top: 1rem;">
+                    <a href="#user-login" class="back-to-login">Back to Login</a>
+                </p>
+            </div>
+            
+                <!-- admin tab moved into shared auth modal -->
+        </div>
+    </div>
+
+    <!-- (removed separate Admin Login Modal - merged into shared auth modal) -->
+
+    <!-- Admin Panel Modal -->
+    <div id="admin-panel-modal" class="modal">
+        <div class="modal-content" style="max-width: 900px; max-height: 90vh;">
+            <span class="close-modal">&times;</span>
+            <div class="admin-panel">
+                <h2><i class="fas fa-user-shield"></i> Admin Panel</h2>
+                
+                <!-- Admin Scanner Section -->
+                <div class="admin-section">
+                    <h3><i class="fas fa-qrcode"></i> Attendance Scanner</h3>
+                    <div class="admin-scanner">
+                        <div class="scanner-box">
+                            <div class="scanner-light"></div>
+                            <p>Admin QR Scanner</p>
+                            <input type="text" id="admin-scan-input" placeholder="Paste QR data or student ID">
+                            <button id="admin-scan-btn" class="btn-primary">
+                                <i class="fas fa-camera"></i> Scan Attendance
+                            </button>
+                        </div>
+                        <div class="attendance-log">
+                            <h4><i class="fas fa-history"></i> Recent Scans</h4>
+                            <div id="admin-attendance-list" class="attendance-list">
+                                <!-- Admin attendance records will appear here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Add Event Form -->
+                <div class="admin-section">
+                    <h3><i class="fas fa-calendar-plus"></i> Add New Event</h3>
+                    <div class="admin-form">
+                        <div class="form-row">
+                            <div class="input-field">
+                                <label for="event-title">Event Title</label>
+                                <input type="text" id="event-title" placeholder="Enter event title">
+                            </div>
+                            <div class="input-field">
+                                <label for="event-category">Category</label>
+                                <select id="event-category">
+                                    <option value="academic">Academic</option>
+                                    <option value="sports">Sports</option>
+                                    <option value="cultural">Cultural</option>
+                                    <option value="social">Social</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="input-field">
+                                <label for="event-campus">Campus</label>
+                                <select id="event-campus">
+                                    <option value="Main Campus">Main Campus</option>
+                                    <option value="Cainta Campus">Cainta Campus</option>
+                                    <option value="Antipolo Campus">Antipolo Campus</option>
+                                    <option value="San Mateo Campus">San Mateo Campus</option>
+                                </select>
+                            </div>
+                            <div class="input-field">
+                                <label for="event-date">Date</label>
+                                <input type="date" id="event-date">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="input-field">
+                                <label for="event-time">Time</label>
+                                <input type="text" id="event-time" placeholder="e.g., 9:00 AM">
+                            </div>
+                            <div class="input-field">
+                                <label for="event-location">Location</label>
+                                <input type="text" id="event-location" placeholder="Enter location">
+                            </div>
+                        </div>
+                        
+                        <div class="input-field">
+                            <label for="event-description">Description</label>
+                            <textarea id="event-description" rows="3" placeholder="Enter event description"></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="input-field">
+                                <label for="event-capacity">Capacity</label>
+                                <input type="number" id="event-capacity" placeholder="Max attendees" min="1">
+                            </div>
+                            <div class="input-field">
+                                <label for="event-speaker">Speaker (Optional)</label>
+                                <input type="text" id="event-speaker" placeholder="Speaker name">
+                            </div>
+                        </div>
+                        
+                        <div class="input-field">
+                            <label for="event-image">Image URL</label>
+                            <input type="text" id="event-image" placeholder="Enter image URL" value="assets/images/events/default.jpg">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button id="add-event-btn" class="btn-primary">
+                                <i class="fas fa-plus-circle"></i> Add Event
+                            </button>
+                            <button id="clear-form-btn" class="btn-secondary">
+                                <i class="fas fa-broom"></i> Clear Form
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Manage Events -->
+                <div class="admin-section">
+                    <h3><i class="fas fa-calendar-alt"></i> Manage Events</h3>
+                    <div id="events-list-admin" class="events-list-admin">
+                        <!-- Events will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Manage Users -->
+                <div class="admin-section">
+                    <h3><i class="fas fa-users"></i> Manage Users</h3>
+                    <div class="user-controls">
+                        <input type="text" id="user-search" placeholder="Search users by name, email, or ID">
+                        <button id="export-users-btn" class="btn-secondary">
+                            <i class="fas fa-file-export"></i> Export Users
+                        </button>
+                    </div>
+                    <div id="users-list-admin" class="users-list-admin">
+                        <!-- Users will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Attendance Data -->
+                <div class="admin-section">
+                    <h3><i class="fas fa-chart-bar"></i> Attendance Analytics</h3>
+                    <div class="attendance-controls">
+                        <select id="analytics-period">
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="all">All Time</option>
+                        </select>
+                        <button id="export-attendance-btn" class="btn-secondary">
+                            <i class="fas fa-file-export"></i> Export to CSV
+                        </button>
+                        <button id="clear-attendance-btn" class="btn-secondary">
+                            <i class="fas fa-trash-alt"></i> Clear Data
+                        </button>
+                    </div>
+                    <div class="analytics-dashboard">
+                        <div class="analytics-card">
+                            <h4><i class="fas fa-users"></i> Total Students</h4>
+                            <p id="total-students">0</p>
+                        </div>
+                        <div class="analytics-card">
+                            <h4><i class="fas fa-calendar-check"></i> Events This Month</h4>
+                            <p id="events-this-month">0</p>
+                        </div>
+                        <div class="analytics-card">
+                            <h4><i class="fas fa-user-check"></i> Today's Attendance</h4>
+                            <p id="todays-attendance">0</p>
+                        </div>
+                        <div class="analytics-card">
+                            <h4><i class="fas fa-percentage"></i> Overall Participation</h4>
+                            <p id="participation-rate">0%</p>
+                        </div>
+                    </div>
+                    <div id="attendance-data" class="attendance-data">
+                        <!-- Attendance data will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h2 class="animate-slide-up">Stay Updated with Campus Events</h2>
+                <p class="animate-slide-up delay-1">Browse, Join, and Track Attendance for All ICCT Campus Activities</p>
+                <div class="hero-buttons">
+                    <a href="#events" class="btn-primary animate-slide-up delay-2">
+                        <i class="fas fa-calendar-alt"></i> Browse Events
+                    </a>
+                    <a href="#user-login" id="hero-login-btn" class="btn-secondary animate-slide-up delay-3">
+                        <i class="fas fa-sign-in-alt"></i> Student Login
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Stats -->
+        <section class="quick-stats">
+            <div class="stat-card">
+                <i class="fas fa-calendar-alt"></i>
+                <h3 id="total-events">0</h3>
+                <p>Upcoming Events</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <h3 id="total-participants">0</h3>
+                <p>Active Participants</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-university"></i>
+                <h3>4</h3>
+                <p>Campuses</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-qrcode"></i>
+                <h3 id="qr-generated">0</h3>
+                <p>QR Codes Generated</p>
+            </div>
+        </section>
+
+        <!-- Advanced Search -->
+        <section class="advanced-search">
+            <h2><i class="fas fa-search"></i> Find Your Perfect Event</h2>
+            <div class="search-container">
+                <div class="search-bar">
+                    <input type="text" id="event-search" placeholder="Search events by title, description, or speaker...">
+                    <button id="search-btn" class="btn-primary">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+                <div class="search-filters">
+                    <select id="search-campus">
+                        <option value="all">All Campuses</option>
+                        <option value="Main Campus">Main Campus</option>
+                        <option value="Cainta Campus">Cainta Campus</option>
+                        <option value="Antipolo Campus">Antipolo Campus</option>
+                        <option value="San Mateo Campus">San Mateo Campus</option>
+                    </select>
+                    <select id="search-category">
+                        <option value="all">All Categories</option>
+                        <option value="academic">Academic</option>
+                        <option value="sports">Sports</option>
+                        <option value="cultural">Cultural</option>
+                        <option value="social">Social</option>
+                    </select>
+                    <input type="date" id="search-date" placeholder="Select Date">
+                    <button id="advanced-search-btn" class="btn-secondary">
+                        <i class="fas fa-filter"></i> Advanced Filters
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Events Grid -->
+        <section id="events" class="events-section">
+            <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Upcoming Events</h2>
+            <div class="events-header">
+                <div class="sort-controls">
+                    <span>Sort by:</span>
+                    <select id="sort-events">
+                        <option value="date">Date (Soonest)</option>
+                        <option value="date-desc">Date (Latest)</option>
+                        <option value="popularity">Popularity</option>
+                        <option value="name">Name (A-Z)</option>
+                    </select>
+                </div>
+                <div class="view-controls">
+                    <button class="view-btn active" data-view="grid"><i class="fas fa-th"></i></button>
+                    <button class="view-btn" data-view="list"><i class="fas fa-list"></i></button>
+                </div>
+            </div>
+            <div id="events-container" class="events-grid">
+                <!-- Events will be loaded here dynamically -->
+            </div>
+            <div class="pagination" id="events-pagination">
+                <!-- Pagination controls -->
+            </div>
+        </section>
+
+        <!-- User Dashboard (Visible when logged in) -->
+        <section id="dashboard" class="dashboard-section" style="display: none;">
+            <h2 class="section-title"><i class="fas fa-tachometer-alt"></i> My Dashboard</h2>
+            <div class="dashboard-container">
+                <!-- User Profile Card -->
+                <div class="dashboard-card profile-card">
+                    <h3><i class="fas fa-user-circle"></i> My Profile</h3>
+                    <div class="profile-info" id="user-profile-info">
+                        <!-- Profile info loaded here -->
+                    </div>
+                    <div class="profile-actions">
+                        <button id="edit-profile-btn" class="btn-secondary">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </button>
+                        <button id="delete-account-btn" class="btn-danger">
+                            <i class="fas fa-trash-alt"></i> Delete Account
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- My Registrations -->
+                <div class="dashboard-card registrations-card">
+                    <h3><i class="fas fa-calendar-check"></i> My Event Registrations</h3>
+                    <div id="my-registrations" class="registrations-list">
+                        <!-- User's event registrations -->
+                    </div>
+                </div>
+                
+                <!-- Event Cart -->
+                <div class="dashboard-card cart-card">
+                    <h3><i class="fas fa-shopping-cart"></i> My Event Cart <span id="cart-count">0</span></h3>
+                    <div id="event-cart" class="cart-items">
+                        <!-- Cart items -->
+                    </div>
+                    <div class="cart-actions">
+                        <button id="checkout-btn" class="btn-primary" disabled>
+                            <i class="fas fa-check-circle"></i> Register All (0)
+                        </button>
+                        <button id="clear-cart-btn" class="btn-secondary">
+                            <i class="fas fa-trash"></i> Clear Cart
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Attendance History -->
+                <div class="dashboard-card attendance-card">
+                    <h3><i class="fas fa-history"></i> My Attendance History</h3>
+                    <div id="my-attendance" class="attendance-history">
+                        <!-- Attendance history -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- QR Generator Section -->
+        <section id="qr-generator" class="qr-section">
+            <h2 class="section-title"><i class="fas fa-qrcode"></i> My Student QR ID</h2>
+            <div class="qr-container">
+                <div class="qr-input">
+                    <div class="section-header">
+                        <h3><i class="fas fa-id-card"></i> Generate Your QR Code</h3>
+                        <p>Fill in your details to create your student QR ID for event attendance</p>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="student-name"><i class="fas fa-user"></i> Full Name</label>
+                            <input type="text" id="student-name" placeholder="Enter your full name" required>
+                        </div>
+                        
+                        <div class="input-field">
+                            <label for="student-campus"><i class="fas fa-school"></i> Campus</label>
+                            <select id="student-campus">
+                                <option value="">Select Your Campus</option>
+                                <option value="Main Campus">🏛️ Main Campus</option>
+                                <option value="Cainta Campus">🎓 Cainta Campus</option>
+                                <option value="Antipolo Campus">🌄 Antipolo Campus</option>
+                                <option value="San Mateo Campus">🌲 San Mateo Campus</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-field">
+                            <label for="student-id"><i class="fas fa-id-badge"></i> Student ID</label>
+                            <input type="text" id="student-id" placeholder="Enter your student ID" required>
+                        </div>
+                        
+                        <div class="input-field">
+                            <label for="student-email"><i class="fas fa-envelope"></i> Email (Optional)</label>
+                            <input type="email" id="student-email" placeholder="Enter your email">
+                        </div>
+                        
+                        <button id="generate-qr" class="btn-primary">
+                            <i class="fas fa-qrcode"></i> Generate QR Code
+                        </button>
+                    </div>
+                    
+                    <div class="info-box">
+                        <p class="note">
+                            <i class="fas fa-lightbulb"></i> <strong>Note:</strong> Generate your QR code once and use it for all events. 
+                            Download and save it on your phone for easy access.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="qr-output">
+                    <div class="qr-display">
+                        <h4><i class="fas fa-qrcode"></i> Your Student QR Code</h4>
+                        <div id="qrcode" class="qr-code-container"></div>
+                        
+                        <div class="qr-info">
+                            <h4 id="qr-student-name">-</h4>
+                            <p id="qr-student-id" class="student-id-display"><i class="fas fa-id-badge"></i> ID: -</p>
+                            <p id="qr-campus" class="campus-display"><i class="fas fa-school"></i> Campus: -</p>
+                            <p id="qr-email" class="email-display" style="display: none;"><i class="fas fa-envelope"></i> Email: -</p>
+                            <p id="qr-generated-time" class="time-display"><i class="fas fa-clock"></i> Generated: -</p>
+                            
+                            <div class="qr-actions">
+                                <button id="download-qr" class="btn-secondary" disabled>
+                                    <i class="fas fa-download"></i> Download QR
+                                </button>
+                                <button id="share-qr" class="btn-secondary" disabled>
+                                    <i class="fas fa-share-alt"></i> Share
+                                </button>
+                                <button id="delete-qr" class="btn-danger" disabled>
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Campuses Info -->
+        <section id="campuses" class="campuses-section">
+            <h2 class="section-title"><i class="fas fa-university"></i> ICCT Campuses</h2>
+            <div class="campuses-grid">
+                <!-- Campus cards will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="assets/images/icct-logo.png" alt="ICCT Logo">
+                <div>
+                    <h3>ICCT Colleges Foundation Inc.</h3>
+                    <p>"Excellence in Education Since 1999"</p>
+                </div>
+            </div>
+            <div class="footer-info">
+                <p><i class="fas fa-graduation-cap"></i> Computer Engineering & Digital Technology Department</p>
+                <p><i class="fas fa-calendar"></i> 2nd Trimester, A.Y. 2025-2026</p>
+                <p><i class="fas fa-code"></i> Web Page Programming (HTML & JavaScript)</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 ICCT Campus Events System. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#terms">Terms of Service</a>
+                <a href="#contact">Contact Us</a>
+                <a href="#help"><i class="fas fa-question-circle"></i> Help Center</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Event Details Modal -->
+    <div id="event-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="edit-profile-modal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-modal">&times;</span>
+            <div class="edit-profile-form">
+                <h2><i class="fas fa-user-edit"></i> Edit Profile</h2>
+                <div class="input-field">
+                    <label for="edit-name">Full Name</label>
+                    <input type="text" id="edit-name">
+                </div>
+                <div class="input-field">
+                    <label for="edit-email">Email Address</label>
+                    <input type="email" id="edit-email">
+                </div>
+                <div class="input-field">
+                    <label for="edit-campus">Campus</label>
+                    <select id="edit-campus">
+                        <option value="Main Campus">Main Campus</option>
+                        <option value="Cainta Campus">Cainta Campus</option>
+                        <option value="Antipolo Campus">Antipolo Campus</option>
+                        <option value="San Mateo Campus">San Mateo Campus</option>
+                    </select>
+                </div>
+                <div class="input-field">
+                    <label for="edit-phone">Phone Number (Optional)</label>
+                    <input type="tel" id="edit-phone" placeholder="Enter phone number">
+                </div>
+                <div class="input-field">
+                    <label for="edit-bio">Bio (Optional)</label>
+                    <textarea id="edit-bio" rows="3" placeholder="Tell us about yourself"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button id="save-profile-btn" class="btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <button id="cancel-edit-btn" class="btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="scripts/events-data.js"></script>
+    <script src="scripts/database.js"></script>
+    <script src="scripts/user-system.js"></script>
+    <script src="scripts/qr-generator.js"></script>
+    <script src="scripts/event-cart.js"></script>
+    <script src="scripts/search-system.js"></script>
+    <script src="scripts/admin-panel.js"></script>
+    <script src="scripts/main.js"></script>
+</body>
+</html>
